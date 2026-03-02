@@ -57,7 +57,7 @@
     /* ── HEADER ─────────────────────────────────────────── */
     .header {
       position: sticky; top: 0; z-index: 200;
-      background: rgba(15,15,26,0.85);
+      background: rgba(15,15,26,0.90);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
@@ -99,9 +99,7 @@
       cursor: pointer; font-family: var(--font);
       transition: all 0.2s;
     }
-    .tab.active {
-      background: var(--accent); color: white;
-    }
+    .tab.active { background: var(--accent); color: white; }
     .tab:not(.active):hover { color: var(--text2); background: var(--bg3); }
 
     /* ── CONTENT ────────────────────────────────────────── */
@@ -113,7 +111,7 @@
     /* ── SUMMARY CARDS ──────────────────────────────────── */
     .summary-grid {
       display: grid; grid-template-columns: repeat(3,1fr); gap: 10px;
-      margin-bottom: 18px;
+      margin-bottom: 14px;
     }
     .scard {
       background: var(--bg2); border: 1px solid var(--border);
@@ -121,8 +119,7 @@
       position: relative; overflow: hidden;
     }
     .scard::before {
-      content: ''; position: absolute; bottom: 0; left: 0; right: 0;
-      height: 3px;
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
     }
     .scard.inc::before { background: var(--green); }
     .scard.exp::before { background: var(--red); }
@@ -132,6 +129,32 @@
     .scard.inc .sval { color: var(--green); }
     .scard.exp .sval { color: var(--red); }
     .scard.bal .sval { color: var(--accent2); }
+
+    /* ── ASSET FLOW CARD ────────────────────────────────── */
+    .asset-flow {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px 18px;
+      margin-bottom: 14px;
+    }
+    .asset-flow-title {
+      font-size: 0.72rem; color: var(--text3); font-weight: 700;
+      letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 14px;
+    }
+    .asset-flow-row {
+      display: flex; align-items: center; gap: 6px; flex-wrap: nowrap;
+    }
+    .asset-box {
+      flex: 1; text-align: center; min-width: 0;
+    }
+    .asset-box .al { font-size: 0.62rem; color: var(--text3); margin-bottom: 3px; }
+    .asset-box .av { font-family: var(--mono); font-size: 0.82rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .asset-arrow { color: var(--text3); font-size: 0.9rem; flex-shrink: 0; }
+    .asset-actual-tag {
+      display: inline-block; padding: 2px 8px;
+      background: rgba(124,106,247,0.15); border: 1px solid rgba(124,106,247,0.3);
+      border-radius: 10px; font-size: 0.62rem; color: var(--accent2);
+      font-weight: 600; margin-top: 3px;
+    }
 
     /* ── CARD ───────────────────────────────────────────── */
     .card {
@@ -163,6 +186,7 @@
     .tx-amt  { font-family: var(--mono); font-size: 0.88rem; font-weight: 700; flex-shrink: 0; }
     .tx-amt.inc { color: var(--green); }
     .tx-amt.exp { color: var(--red); }
+    .tx-auto-badge { font-size: 0.58rem; background: rgba(124,106,247,0.15); color: var(--accent2); padding: 1px 5px; border-radius: 4px; margin-left: 4px; vertical-align: middle; }
     .tx-del {
       background: none; border: none; color: var(--text3);
       cursor: pointer; padding: 4px; border-radius: 6px;
@@ -205,6 +229,11 @@
     }
     .submit-btn:hover { opacity: 0.88; }
     .submit-btn:active { transform: scale(0.98); }
+    .submit-btn.secondary {
+      background: var(--bg3); border: 1.5px solid var(--border);
+      color: var(--text2);
+    }
+    .submit-btn.secondary:hover { border-color: var(--accent); color: var(--accent); }
 
     /* ── FILTER CHIPS ───────────────────────────────────── */
     .chips { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
@@ -258,22 +287,92 @@
     .cpct  { font-size: 0.72rem; color: var(--text3); min-width: 32px; text-align: right; }
     .camt  { font-size: 0.74rem; font-weight: 700; color: var(--text2); min-width: 60px; text-align: right; font-family: var(--mono); }
 
-    /* ── EMPTY ──────────────────────────────────────────── */
-    .empty { text-align: center; padding: 32px 16px; color: var(--text3); }
-    .empty .ei { font-size: 2.4rem; margin-bottom: 10px; }
-    .empty p   { font-size: 0.82rem; line-height: 1.6; }
+    /* ── RECURRING ITEMS ────────────────────────────────── */
+    .rec-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 0; border-bottom: 1px solid var(--border);
+    }
+    .rec-item:last-child { border-bottom: none; }
+    .rec-icon {
+      width: 34px; height: 34px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.95rem; flex-shrink: 0;
+    }
+    .rec-body { flex: 1; min-width: 0; }
+    .rec-name { font-size: 0.84rem; font-weight: 600; color: var(--text); }
+    .rec-meta { font-size: 0.70rem; color: var(--text3); margin-top: 2px; }
+    .rec-amt  { font-family: var(--mono); font-size: 0.84rem; font-weight: 700; flex-shrink: 0; }
+    .rec-amt.inc { color: var(--green); }
+    .rec-amt.exp { color: var(--red); }
 
-    /* ── ALERT ──────────────────────────────────────────── */
+    /* Toggle switch */
+    .toggle-wrap { position: relative; display: inline-block; width: 38px; height: 22px; flex-shrink: 0; }
+    .toggle-wrap input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--border); border-radius: 11px; transition: .25s;
+    }
+    .toggle-slider:before {
+      position: absolute; content: ""; height: 16px; width: 16px;
+      left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .25s;
+    }
+    .toggle-wrap input:checked + .toggle-slider { background: var(--accent); }
+    .toggle-wrap input:checked + .toggle-slider:before { transform: translateX(16px); }
+    .toggle-wrap input:disabled + .toggle-slider { opacity: 0.4; cursor: not-allowed; }
+
+    .rec-del {
+      background: none; border: none; color: var(--text3);
+      cursor: pointer; padding: 4px 6px; border-radius: 6px;
+      font-size: 0.8rem; transition: all 0.2s; flex-shrink: 0;
+    }
+    .rec-del:hover { color: var(--red); background: rgba(248,113,113,0.1); }
+
+    /* ── ALERTS ─────────────────────────────────────────── */
     .alert-over {
-      background: rgba(248,113,113,0.08);
-      border: 1px solid rgba(248,113,113,0.3);
-      border-radius: var(--radius-sm);
-      padding: 12px 14px; margin-bottom: 14px;
+      background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.3);
+      border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 14px;
     }
     .alert-over .ah { font-size: 0.78rem; font-weight: 700; color: var(--red); margin-bottom: 4px; }
     .alert-over .am { font-size: 0.74rem; color: rgba(248,113,113,0.8); }
 
-    /* ── SUCCESS TOAST ──────────────────────────────────── */
+    .alert-auto {
+      background: rgba(124,106,247,0.08); border: 1px solid rgba(124,106,247,0.25);
+      border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 14px;
+    }
+    .alert-auto .ah { font-size: 0.78rem; font-weight: 700; color: var(--accent2); margin-bottom: 4px; }
+    .alert-auto .am { font-size: 0.74rem; color: rgba(167,139,250,0.8); margin-bottom: 10px; }
+    .apply-now-btn {
+      padding: 7px 16px; background: var(--accent); color: white;
+      border: none; border-radius: 8px; font-size: 0.76rem; font-weight: 700;
+      cursor: pointer; font-family: var(--font); width: 100%;
+    }
+    .apply-now-btn:hover { opacity: 0.85; }
+
+    .badge-applied {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 10px; background: rgba(52,211,153,0.1);
+      border: 1px solid rgba(52,211,153,0.2); border-radius: 12px;
+      font-size: 0.72rem; color: var(--green); font-weight: 600; margin-bottom: 14px;
+    }
+
+    /* ── ASSET INPUT ────────────────────────────────────── */
+    .asset-input-row { display: flex; gap: 8px; align-items: flex-end; margin-top: 12px; }
+    .asset-input-row .finput { flex: 1; font-family: var(--mono); }
+    .asset-save-btn {
+      padding: 10px 16px; background: var(--accent); color: white;
+      border: none; border-radius: var(--radius-sm); font-size: 0.80rem;
+      font-weight: 700; cursor: pointer; font-family: var(--font);
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .asset-save-btn:hover { opacity: 0.85; }
+    .asset-delete-btn {
+      padding: 10px 12px; background: transparent; color: var(--text3);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      font-size: 0.78rem; cursor: pointer; font-family: var(--font); flex-shrink: 0;
+    }
+    .asset-delete-btn:hover { color: var(--red); border-color: var(--red); }
+
+    /* ── TOAST ──────────────────────────────────────────── */
     .toast {
       background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.3);
       border-radius: var(--radius-sm); padding: 10px 14px;
@@ -290,6 +389,11 @@
       cursor: pointer; font-family: var(--font); transition: all 0.2s;
     }
     .export-btn:hover { background: var(--surface); border-color: var(--accent); color: var(--accent); }
+
+    /* ── EMPTY ──────────────────────────────────────────── */
+    .empty { text-align: center; padding: 32px 16px; color: var(--text3); }
+    .empty .ei { font-size: 2.4rem; margin-bottom: 10px; }
+    .empty p   { font-size: 0.82rem; line-height: 1.6; }
 
     /* ── PWA INSTALL BANNER ─────────────────────────────── */
     #install-banner {
@@ -311,6 +415,9 @@
       font-size: 1.2rem; padding: 4px;
     }
 
+    /* ── DIVIDER ────────────────────────────────────────── */
+    .divider { height: 1px; background: var(--border); margin: 14px 0; }
+
     /* ── SCROLLBAR ──────────────────────────────────────── */
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
@@ -319,6 +426,8 @@
     @media (max-width: 380px) {
       .frow { grid-template-columns: 1fr; }
       .scard .sval { font-size: 0.80rem; }
+      .asset-flow-row { gap: 4px; }
+      .asset-box .av { font-size: 0.74rem; }
     }
   </style>
 </head>
@@ -338,6 +447,7 @@
     <button class="tab active" data-tab="dashboard">🏠 홈</button>
     <button class="tab" data-tab="add">➕ 입력</button>
     <button class="tab" data-tab="list">📋 내역</button>
+    <button class="tab" data-tab="auto">🔄 자동화</button>
     <button class="tab" data-tab="budget">🎯 예산</button>
     <button class="tab" data-tab="chart">📊 차트</button>
     <button class="tab" data-tab="report">📈 리포트</button>
@@ -359,14 +469,15 @@
 <script>
 // ─── CATEGORIES ─────────────────────────────────────────────
 const EXP_CATS = [
-  { id:'food',      label:'🍚 식비',     color:'#f87171' },
-  { id:'transport', label:'🚌 교통',     color:'#fb923c' },
-  { id:'shopping',  label:'🛍 쇼핑',    color:'#a78bfa' },
+  { id:'food',      label:'🍚 식비',      color:'#f87171' },
+  { id:'transport', label:'🚌 교통',      color:'#fb923c' },
+  { id:'shopping',  label:'🛍 쇼핑',     color:'#a78bfa' },
   { id:'health',    label:'💊 의료/건강', color:'#34d399' },
   { id:'culture',   label:'🎬 문화/여가', color:'#60a5fa' },
-  { id:'edu',       label:'📚 교육',     color:'#f472b6' },
+  { id:'edu',       label:'📚 교육',      color:'#f472b6' },
   { id:'house',     label:'🏠 주거/관리', color:'#fbbf24' },
-  { id:'etc',       label:'💸 기타',     color:'#94a3b8' },
+  { id:'saving',    label:'🏦 적금/저축', color:'#38bdf8' },
+  { id:'etc',       label:'💸 기타',      color:'#94a3b8' },
 ];
 const INC_CATS = [
   { id:'salary',  label:'💼 급여',     color:'#34d399' },
@@ -381,7 +492,7 @@ const ALL_CATS = [...EXP_CATS, ...INC_CATS];
 const fmt      = n => n.toLocaleString('ko-KR') + '원';
 const fmtShort = n => {
   if (Math.abs(n) >= 100000000) return (n/100000000).toFixed(1)+'억';
-  if (Math.abs(n) >= 10000)     return (n/10000).toFixed(0)+'만';
+  if (Math.abs(n) >= 10000)     return (n/10000).toFixed(1)+'만';
   return n.toLocaleString('ko-KR');
 };
 const mkKey = (y,m) => `${y}-${String(m+1).padStart(2,'0')}`;
@@ -405,11 +516,17 @@ function save(key, val) {
   try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
 }
 
-let transactions = load('kh_tx', []);
-let budgets      = load('kh_budgets', {});
+let transactions   = load('kh_tx',        []);
+let budgets        = load('kh_budgets',    {});
+let recurring      = load('kh_recurring',  []);   // 자동 거래 템플릿
+let monthlyAssets  = load('kh_assets',     {});   // 월말 총 자산 스냅샷
+let appliedMonths  = load('kh_applied',    []);   // 자동 적용 완료된 달 목록
 
-function saveTx()  { save('kh_tx', transactions); }
-function saveBg()  { save('kh_budgets', budgets); }
+function saveTx()       { save('kh_tx',        transactions); }
+function saveBg()       { save('kh_budgets',   budgets); }
+function saveRecurring(){ save('kh_recurring', recurring); }
+function saveAssets()   { save('kh_assets',    monthlyAssets); }
+function saveApplied()  { save('kh_applied',   appliedMonths); }
 
 // ─── DERIVED ────────────────────────────────────────────────
 function getMonthTx() {
@@ -427,6 +544,56 @@ function totals(txs) {
   return { inc, exp, bal: inc-exp };
 }
 
+// 이전 달 키
+function prevMonthKey() {
+  let pm = curMonth - 1, py = curYear;
+  if (pm < 0) { pm = 11; py--; }
+  return mkKey(py, pm);
+}
+
+// 자동 거래 적용 (현재 달에)
+function applyRecurring() {
+  const mk = mkKey(curYear, curMonth);
+  const active = recurring.filter(r => r.active);
+
+  active.forEach(r => {
+    // 이미 이 달에 이 recurring ID로 추가된 항목이 있으면 스킵
+    const already = transactions.some(t => t.recurringId === r.id && t.date.startsWith(mk));
+    if (already) return;
+
+    // 해당 월 최대 일수로 클램핑
+    const maxDay = new Date(curYear, curMonth + 1, 0).getDate();
+    const day = Math.min(r.day, maxDay);
+    const date = `${mk}-${String(day).padStart(2,'0')}`;
+
+    transactions.push({
+      id: Date.now().toString() + '_' + Math.random().toString(36).slice(2),
+      type: r.type,
+      date,
+      amount: r.amount,
+      category: r.category,
+      memo: r.name,
+      recurringId: r.id,
+    });
+  });
+
+  saveTx();
+  if (!appliedMonths.includes(mk)) {
+    appliedMonths.push(mk);
+    saveApplied();
+  }
+}
+
+// 자동 거래 재적용 (기존 항목 삭제 후 다시 적용)
+function reapplyRecurring() {
+  const mk = mkKey(curYear, curMonth);
+  // 이 달의 자동 거래 항목 제거
+  transactions = transactions.filter(t => !(t.recurringId && t.date.startsWith(mk)));
+  // 적용 기록 제거
+  appliedMonths = appliedMonths.filter(m => m !== mk);
+  applyRecurring();
+}
+
 // ─── RENDER ─────────────────────────────────────────────────
 function render() {
   document.getElementById('month-label').textContent =
@@ -434,15 +601,16 @@ function render() {
   document.querySelectorAll('.tab').forEach(t =>
     t.classList.toggle('active', t.dataset.tab === curTab));
 
-  const content = document.getElementById('content');
-  const monthTx = getMonthTx();
-  const mb = getMonthBudgets();
+  const content  = document.getElementById('content');
+  const monthTx  = getMonthTx();
+  const mb       = getMonthBudgets();
   const {inc, exp, bal} = totals(monthTx);
 
   const pages = {
     dashboard: () => renderDashboard(monthTx, inc, exp, bal, mb),
     add:       () => renderAdd(),
     list:      () => renderList(monthTx),
+    auto:      () => renderAutomatic(),
     budget:    () => renderBudget(monthTx, mb),
     chart:     () => renderChart(monthTx),
     report:    () => renderReport(monthTx, inc, exp, bal, mb),
@@ -451,14 +619,21 @@ function render() {
   afterRender();
 }
 
-// ─── AFTER RENDER (attach events, charts) ───────────────────
+// ─── AFTER RENDER ────────────────────────────────────────────
 function afterRender() {
   if (curTab === 'add')    bindAddForm();
   if (curTab === 'list')   bindList();
+  if (curTab === 'auto')   bindAutomatic();
   if (curTab === 'budget') bindBudget();
   if (curTab === 'chart')  buildCharts();
-  if (curTab === 'report') bindExport();
-  // delete buttons (dashboard + list)
+  if (curTab === 'report') bindReport();
+
+  // 대시보드 자동 적용 버튼
+  document.getElementById('apply-now-btn')?.addEventListener('click', () => {
+    applyRecurring(); render();
+  });
+
+  // 삭제 버튼 (공통)
   document.querySelectorAll('.tx-del').forEach(btn => {
     btn.addEventListener('click', () => {
       transactions = transactions.filter(t => t.id !== btn.dataset.id);
@@ -467,7 +642,7 @@ function afterRender() {
   });
 }
 
-// ─── SUMMARY CARDS ──────────────────────────────────────────
+// ─── SUMMARY HTML ────────────────────────────────────────────
 function summaryHTML(inc, exp, bal) {
   return `
   <div class="summary-grid">
@@ -481,6 +656,7 @@ function summaryHTML(inc, exp, bal) {
 function txRowHTML(tx, showDel=false) {
   const cat = ALL_CATS.find(c=>c.id===tx.category)||{label:'💰',color:'#888'};
   const sign = tx.type==='income' ? '+' : '-';
+  const autoBadge = tx.recurringId ? '<span class="tx-auto-badge">자동</span>' : '';
   const delBtn = showDel
     ? `<button class="tx-del" data-id="${tx.id}">✕</button>`
     : '';
@@ -488,7 +664,7 @@ function txRowHTML(tx, showDel=false) {
   <div class="tx-item">
     <div class="tx-icon" style="background:${cat.color}22">${cat.label.split(' ')[0]}</div>
     <div class="tx-body">
-      <div class="tx-name">${tx.memo || cat.label}</div>
+      <div class="tx-name">${tx.memo || cat.label}${autoBadge}</div>
       <div class="tx-meta">${tx.date} · ${cat.label}</div>
     </div>
     <div class="tx-amt ${tx.type==='income'?'inc':'exp'}">${sign}${fmt(tx.amount)}</div>
@@ -496,11 +672,81 @@ function txRowHTML(tx, showDel=false) {
   </div>`;
 }
 
+// ─── ASSET FLOW HTML ─────────────────────────────────────────
+function assetFlowHTML(inc, exp) {
+  const mk = mkKey(curYear, curMonth);
+  const prevMk = prevMonthKey();
+  const prevAssets = monthlyAssets[prevMk];
+  const actualAssets = monthlyAssets[mk];
+
+  // 이전 달 자산이 없고 실제 자산도 없으면 표시하지 않음
+  if (prevAssets === undefined && actualAssets === undefined) return '';
+
+  const openingStr = prevAssets !== undefined ? fmt(prevAssets) : '미입력';
+  const netStr = (inc - exp >= 0 ? '+' : '') + fmtShort(inc - exp) + '원';
+  const netColor = inc - exp >= 0 ? 'var(--green)' : 'var(--red)';
+
+  let closingVal, closingColor, closingTag = '';
+  if (actualAssets !== undefined) {
+    closingVal = fmt(actualAssets);
+    closingColor = 'var(--accent2)';
+    closingTag = '<div class="asset-actual-tag">✓ 실제 입력</div>';
+  } else if (prevAssets !== undefined) {
+    const calc = prevAssets + inc - exp;
+    closingVal = fmt(calc);
+    closingColor = 'var(--text2)';
+    closingTag = '<div style="font-size:0.60rem;color:var(--text3);margin-top:3px">예상</div>';
+  } else {
+    closingVal = fmt(actualAssets);
+    closingColor = 'var(--accent2)';
+    closingTag = '<div class="asset-actual-tag">✓ 실제 입력</div>';
+  }
+
+  return `
+  <div class="asset-flow">
+    <div class="asset-flow-title">💎 총 자산 흐름</div>
+    <div class="asset-flow-row">
+      <div class="asset-box">
+        <div class="al">이전 달 자산</div>
+        <div class="av" style="color:var(--text2)">${openingStr}</div>
+      </div>
+      <div class="asset-arrow">+</div>
+      <div class="asset-box">
+        <div class="al">이번 달 순액</div>
+        <div class="av" style="color:${netColor}">${netStr}</div>
+      </div>
+      <div class="asset-arrow">=</div>
+      <div class="asset-box">
+        <div class="al">${actualAssets !== undefined ? '이번 달 자산' : '예상 자산'}</div>
+        <div class="av" style="color:${closingColor}">${closingVal}</div>
+        ${closingTag}
+      </div>
+    </div>
+  </div>`;
+}
+
 // ─── DASHBOARD ──────────────────────────────────────────────
 function renderDashboard(monthTx, inc, exp, bal, mb) {
+  const mk = mkKey(curYear, curMonth);
   const expTx = monthTx.filter(t=>t.type==='expense');
+  const isApplied = appliedMonths.includes(mk);
+  const activeRec = recurring.filter(r => r.active);
 
-  // Over budget warning
+  // 자동 거래 알림
+  let autoAlertHTML = '';
+  if (activeRec.length > 0 && !isApplied) {
+    const total = activeRec.reduce((s,r) => s + (r.type==='income'?r.amount:-r.amount), 0);
+    autoAlertHTML = `
+    <div class="alert-auto">
+      <div class="ah">🔄 자동 거래 ${activeRec.length}건 미적용</div>
+      <div class="am">월급·적금·고정지출 등 자동 거래가 이번 달에 아직 적용되지 않았어요<br/>
+        <span style="font-family:var(--mono);font-size:0.78rem">(${activeRec.filter(r=>r.type==='income').length}개 수입, ${activeRec.filter(r=>r.type==='expense').length}개 지출)</span>
+      </div>
+      <button class="apply-now-btn" id="apply-now-btn">⚡ 지금 자동 적용하기</button>
+    </div>`;
+  }
+
+  // 예산 초과 경고
   const over = EXP_CATS.filter(c => {
     const b = mb[c.id]; if (!b) return false;
     const sp = expTx.filter(t=>t.category===c.id).reduce((s,t)=>s+t.amount,0);
@@ -535,13 +781,15 @@ function renderDashboard(monthTx, inc, exp, bal, mb) {
   const recent = monthTx.slice(0,5);
   return `
     ${summaryHTML(inc,exp,bal)}
+    ${assetFlowHTML(inc, exp)}
+    ${autoAlertHTML}
     ${alertHTML}
     ${top3HTML}
     <div class="card">
       <div class="card-title">🕐 최근 거래</div>
       ${recent.length
         ? recent.map(tx=>txRowHTML(tx,false)).join('')
-        : '<div class="empty"><div class="ei">📭</div><p>이번 달 거래가 없어요<br/>➕ 입력 탭에서 추가해보세요!</p></div>'}
+        : '<div class="empty"><div class="ei">📭</div><p>이번 달 거래가 없어요<br/>🔄 자동화 탭에서 자동 거래를 설정하거나<br/>➕ 입력 탭에서 직접 추가해보세요!</p></div>'}
     </div>`;
 }
 
@@ -646,6 +894,178 @@ function bindList() {
   });
 }
 
+// ─── AUTOMATIC TAB ───────────────────────────────────────────
+function renderAutomatic() {
+  const mk = mkKey(curYear, curMonth);
+  const isApplied = appliedMonths.includes(mk);
+  const activeRec = recurring.filter(r => r.active);
+
+  // 이번 달 적용 상태
+  const statusHTML = isApplied
+    ? `<div class="badge-applied">✅ ${curYear}년 ${curMonth+1}월 적용 완료</div>`
+    : '';
+
+  // 이번 달 자동 거래 합산
+  const incSum = activeRec.filter(r=>r.type==='income').reduce((s,r)=>s+r.amount,0);
+  const expSum = activeRec.filter(r=>r.type==='expense').reduce((s,r)=>s+r.amount,0);
+  const summaryBar = activeRec.length > 0 ? `
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <div style="flex:1;background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.2);border-radius:10px;padding:10px;text-align:center">
+        <div style="font-size:0.66rem;color:var(--text3);margin-bottom:4px">자동 수입 합계</div>
+        <div style="font-family:var(--mono);font-size:0.88rem;font-weight:700;color:var(--green)">+${fmt(incSum)}</div>
+      </div>
+      <div style="flex:1;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:10px;padding:10px;text-align:center">
+        <div style="font-size:0.66rem;color:var(--text3);margin-bottom:4px">자동 지출 합계</div>
+        <div style="font-family:var(--mono);font-size:0.88rem;font-weight:700;color:var(--red)">-${fmt(expSum)}</div>
+      </div>
+    </div>` : '';
+
+  // 자동 거래 목록
+  const recListHTML = recurring.length > 0 ? recurring.map(r => {
+    const cat = ALL_CATS.find(c=>c.id===r.category) || { label:'💰', color:'#888' };
+    const sign = r.type === 'income' ? '+' : '-';
+    return `
+    <div class="rec-item">
+      <div class="rec-icon" style="background:${cat.color}22;opacity:${r.active?1:0.45}">${cat.label.split(' ')[0]}</div>
+      <div class="rec-body" style="opacity:${r.active?1:0.5}">
+        <div class="rec-name">${r.name}</div>
+        <div class="rec-meta">매월 ${r.day}일 · ${cat.label}</div>
+      </div>
+      <div class="rec-amt ${r.type==='income'?'inc':'exp'}" style="opacity:${r.active?1:0.5}">${sign}${fmtShort(r.amount)}원</div>
+      <label class="toggle-wrap">
+        <input type="checkbox" ${r.active?'checked':''} data-rid="${r.id}"/>
+        <span class="toggle-slider"></span>
+      </label>
+      <button class="rec-del" data-rid="${r.id}">✕</button>
+    </div>`;
+  }).join('')
+  : '<div class="empty"><div class="ei">🔄</div><p>자동 거래가 없어요<br/>아래에서 추가해보세요</p></div>';
+
+  return `
+  <div class="card">
+    <div class="card-title">⚡ 이번 달 자동 적용</div>
+    ${statusHTML}
+    ${summaryBar}
+    <p style="font-size:0.74rem;color:var(--text3);margin-bottom:12px">
+      설정한 자동 거래를 이번 달(${curYear}년 ${curMonth+1}월)에 일괄 추가해요.<br/>
+      이미 적용된 달은 중복 추가되지 않아요.
+    </p>
+    <button class="submit-btn" id="auto-apply-btn">
+      ${isApplied ? '🔄 다시 적용하기 (기존 자동 항목 교체)' : `⚡ ${curYear}년 ${curMonth+1}월 자동 거래 적용`}
+    </button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 자동 거래 목록 <span>${activeRec.length}개 활성</span></div>
+    ${recListHTML}
+  </div>
+
+  <div class="card">
+    <div class="card-title">➕ 자동 거래 추가</div>
+    <div id="rec-toast"></div>
+    <div class="type-toggle">
+      <button class="type-btn inc on" id="rec-btn-inc" onclick="setRecType('income')">＋ 수입 (월급)</button>
+      <button class="type-btn exp" id="rec-btn-exp" onclick="setRecType('expense')">－ 지출 (적금·고정)</button>
+    </div>
+    <input type="hidden" id="rec-type" value="income"/>
+    <div class="fg">
+      <label class="flabel">이름</label>
+      <input type="text" class="finput" id="rec-name" placeholder="예: 월급, 청약저축, 월세, 핸드폰 요금"/>
+    </div>
+    <div class="frow">
+      <div class="fg">
+        <label class="flabel">카테고리</label>
+        <select class="fselect" id="rec-cat">
+          ${INC_CATS.map(c=>`<option value="${c.id}">${c.label}</option>`).join('')}
+        </select>
+      </div>
+      <div class="fg">
+        <label class="flabel">매월 몇 일</label>
+        <input type="number" class="finput" id="rec-day" min="1" max="31" value="25" placeholder="25"/>
+      </div>
+    </div>
+    <div class="fg">
+      <label class="flabel">금액 (원)</label>
+      <input type="text" inputmode="numeric" class="finput" id="rec-amount" placeholder="0"/>
+    </div>
+    <button class="submit-btn" id="rec-submit">🔄 자동 거래 추가</button>
+  </div>`;
+}
+
+function setRecType(t) {
+  document.getElementById('rec-type').value = t;
+  const incBtn = document.getElementById('rec-btn-inc');
+  const expBtn = document.getElementById('rec-btn-exp');
+  const catSel = document.getElementById('rec-cat');
+  incBtn.className = `type-btn inc${t==='income'?' on':''}`;
+  expBtn.className = `type-btn exp${t==='expense'?' on':''}`;
+  const cats = t==='income' ? INC_CATS : EXP_CATS;
+  catSel.innerHTML = cats.map(c=>`<option value="${c.id}">${c.label}</option>`).join('');
+}
+
+function bindAutomatic() {
+  // 이번 달 적용 버튼
+  document.getElementById('auto-apply-btn')?.addEventListener('click', () => {
+    const active = recurring.filter(r => r.active);
+    if (active.length === 0) { alert('활성화된 자동 거래가 없어요.\n아래에서 먼저 자동 거래를 추가하고 활성화하세요.'); return; }
+    const mk = mkKey(curYear, curMonth);
+    const isApplied = appliedMonths.includes(mk);
+    if (isApplied) {
+      if (!confirm(`이미 적용된 달입니다.\n기존 자동 거래 항목을 삭제하고 다시 적용할까요?`)) return;
+      reapplyRecurring();
+    } else {
+      applyRecurring();
+    }
+    render();
+  });
+
+  // 토글 활성화/비활성화
+  document.querySelectorAll('.toggle-wrap input').forEach(inp => {
+    inp.addEventListener('change', () => {
+      const rid = inp.dataset.rid;
+      const rec = recurring.find(r => r.id === rid);
+      if (rec) { rec.active = inp.checked; saveRecurring(); render(); }
+    });
+  });
+
+  // 삭제
+  document.querySelectorAll('.rec-del').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (!confirm('이 자동 거래를 삭제할까요?')) return;
+      recurring = recurring.filter(r => r.id !== btn.dataset.rid);
+      saveRecurring(); render();
+    });
+  });
+
+  // 금액 포맷
+  document.getElementById('rec-amount')?.addEventListener('input', e => {
+    e.target.value = fmtNum(e.target.value);
+  });
+
+  // 자동 거래 추가
+  document.getElementById('rec-submit')?.addEventListener('click', () => {
+    const name   = document.getElementById('rec-name').value.trim();
+    const type   = document.getElementById('rec-type').value;
+    const cat    = document.getElementById('rec-cat').value;
+    const day    = parseInt(document.getElementById('rec-day').value);
+    const rawAmt = document.getElementById('rec-amount').value;
+    const amount = parseInt((rawAmt||'').replace(/,/g,''));
+    if (!name)             { alert('이름을 입력해주세요.'); return; }
+    if (!amount || amount<=0) { alert('금액을 입력해주세요.'); return; }
+    if (!day || day<1 || day>31) { alert('날짜를 1~31 사이로 입력해주세요.'); return; }
+    recurring.push({ id: Date.now().toString(), name, type, category: cat, amount, day, active: true });
+    saveRecurring();
+    // 폼 초기화 후 렌더
+    render();
+    // 토스트 표시
+    const toast = document.getElementById('rec-toast');
+    if (toast) {
+      toast.innerHTML = '<div class="toast">✅ 자동 거래가 추가되었어요!</div>';
+      setTimeout(() => { if (toast) toast.innerHTML = ''; }, 1800);
+    }
+  });
+}
+
 // ─── BUDGET ─────────────────────────────────────────────────
 function renderBudget(monthTx, mb) {
   const expTx = monthTx.filter(t=>t.type==='expense');
@@ -720,18 +1140,13 @@ function buildCharts() {
   const catKeys = Object.keys(catMap).filter(k=>catMap[k]>0);
   const cats = catKeys.map(k=>EXP_CATS.find(c=>c.id===k)||{id:k,label:k,color:'#888'});
 
-  // Pie
   const pieEl = document.getElementById('pie-chart');
   if (pieEl && catKeys.length>0) {
     new Chart(pieEl, {
       type:'doughnut',
       data:{
         labels: cats.map(c=>c.label),
-        datasets:[{
-          data: catKeys.map(k=>catMap[k]),
-          backgroundColor: cats.map(c=>c.color),
-          borderWidth:2, borderColor:'#16162a'
-        }]
+        datasets:[{ data: catKeys.map(k=>catMap[k]), backgroundColor: cats.map(c=>c.color), borderWidth:2, borderColor:'#16162a' }]
       },
       options:{
         responsive:true, maintainAspectRatio:false,
@@ -747,7 +1162,7 @@ function buildCharts() {
       '<div class="empty"><div class="ei">📊</div><p>지출 내역을 추가하면<br/>차트가 표시돼요</p></div>';
   }
 
-  // Bar (last 6 months)
+  // 최근 6개월 막대
   const months6 = [];
   for (let i=5;i>=0;i--) {
     let m=curMonth-i, y=curYear;
@@ -790,11 +1205,12 @@ function buildCharts() {
 
 // ─── REPORT ─────────────────────────────────────────────────
 function renderReport(monthTx, inc, exp, bal, mb) {
+  const mk = mkKey(curYear, curMonth);
   const expTx = monthTx.filter(t=>t.type==='expense');
   const catMap = {};
   expTx.forEach(t=>{ catMap[t.category]=(catMap[t.category]||0)+t.amount; });
 
-  // Previous month
+  // 전월 대비
   let pm=curMonth-1, py=curYear;
   if(pm<0){pm=11;py--;}
   const prevTx = transactions.filter(t=>t.date.startsWith(mkKey(py,pm)));
@@ -811,21 +1227,65 @@ function renderReport(monthTx, inc, exp, bal, mb) {
     return `<span style="color:${col}">${arrow} ${fmt(Math.abs(diff))}${pct}</span>`;
   };
 
+  // 예산 달성
   const budgetCats = EXP_CATS.filter(c=>mb[c.id]);
   const achiev = budgetCats.filter(c=>(catMap[c.id]||0)<=mb[c.id]);
 
-  const exportSection = `
+  // 총 자산 섹션
+  const prevMk = mkKey(py, pm);
+  const prevAssets = monthlyAssets[prevMk];
+  const actualAssets = monthlyAssets[mk];
+  const calcAssets = prevAssets !== undefined ? prevAssets + inc - exp : null;
+  const diff = actualAssets !== undefined && calcAssets !== null ? actualAssets - calcAssets : null;
+
+  const assetSection = `
   <div class="card">
-    <div class="card-title">💾 데이터 내보내기</div>
-    <div class="export-row">
-      <button class="export-btn" id="exp-csv">📄 CSV 내보내기</button>
-      <button class="export-btn" id="exp-xlsx">📊 Excel 내보내기</button>
+    <div class="card-title">💎 월말 총 자산 입력</div>
+    <p style="font-size:0.74rem;color:var(--text3);margin-bottom:14px">
+      이번 달이 끝날 때 실제 총 자산(예금·현금·투자 등 합계)을 입력하면<br/>
+      다음 달 잔액 계산의 기준이 돼요.
+    </p>
+    ${prevAssets !== undefined ? `
+    <div class="srow">
+      <span class="slbl">이전 달 총 자산 (${py}년 ${pm+1}월)</span>
+      <span class="sval2" style="color:var(--text2)">${fmt(prevAssets)}</span>
     </div>
-    <div class="export-row">
-      <button class="export-btn" id="exp-all-csv" style="flex:1">📦 전체 CSV 내보내기</button>
+    <div class="srow">
+      <span class="slbl">이번 달 수입 - 지출</span>
+      <span class="sval2" style="color:${inc-exp>=0?'var(--green)':'var(--red)'}">
+        ${inc-exp>=0?'+':''}${fmt(inc-exp)}
+      </span>
     </div>
+    <div class="srow">
+      <span class="slbl">계산된 예상 자산</span>
+      <span class="sval2" style="color:var(--text2)">${fmt(calcAssets)}</span>
+    </div>
+    ${diff !== null ? `
+    <div class="srow">
+      <span class="slbl">실제 vs 예상 차이</span>
+      <span class="sval2" style="color:${diff>=0?'var(--green)':'var(--red)'}">
+        ${diff>=0?'+':''}${fmt(diff)}
+      </span>
+    </div>` : ''}
+    <div class="divider"></div>` : ''}
+    ${actualAssets !== undefined ? `
+    <div style="background:rgba(124,106,247,0.08);border:1px solid rgba(124,106,247,0.2);border-radius:10px;padding:12px;margin-bottom:12px;text-align:center">
+      <div style="font-size:0.70rem;color:var(--text3);margin-bottom:4px">${curYear}년 ${curMonth+1}월 총 자산 (입력됨)</div>
+      <div style="font-family:var(--mono);font-size:1.2rem;font-weight:800;color:var(--accent2)">${fmt(actualAssets)}</div>
+    </div>` : ''}
+    <div class="fg">
+      <label class="flabel">${actualAssets !== undefined ? '총 자산 수정' : '이번 달 총 자산 입력 (원)'}</label>
+      <div class="asset-input-row">
+        <input type="text" inputmode="numeric" class="finput" id="asset-input"
+          placeholder="예: 12,500,000" value="${actualAssets !== undefined ? actualAssets.toLocaleString('ko-KR') : ''}"/>
+        <button class="asset-save-btn" id="asset-save">저장</button>
+        ${actualAssets !== undefined ? `<button class="asset-delete-btn" id="asset-delete">삭제</button>` : ''}
+      </div>
+    </div>
+    <div id="asset-toast"></div>
   </div>`;
 
+  // 카테고리별 지출
   const catSection = Object.keys(catMap).length ? Object.entries(catMap).sort((a,b)=>b[1]-a[1]).map(([id,amt])=>{
     const cat = EXP_CATS.find(c=>c.id===id);
     const pct = exp>0?Math.round(amt/exp*100):0;
@@ -839,6 +1299,7 @@ function renderReport(monthTx, inc, exp, bal, mb) {
   }).join('') : '<div class="empty"><div class="ei">📊</div><p>지출 내역이 없어요</p></div>';
 
   return `
+  ${assetSection}
   <div class="card">
     <div class="card-title">📈 이번 달 요약</div>
     ${[
@@ -874,13 +1335,47 @@ function renderReport(monthTx, inc, exp, bal, mb) {
       </div>`;
     }).join('')}
   </div>` : ''}
-  ${exportSection}`;
+  <div class="card">
+    <div class="card-title">💾 데이터 내보내기</div>
+    <div class="export-row">
+      <button class="export-btn" id="exp-csv">📄 이번 달 CSV</button>
+      <button class="export-btn" id="exp-xlsx">📊 이번 달 Excel</button>
+    </div>
+    <div class="export-row">
+      <button class="export-btn" id="exp-all-csv">📦 전체 데이터 CSV</button>
+    </div>
+  </div>`;
 }
 
-function bindExport() {
+function bindReport() {
+  // 총 자산 저장
+  const mk = mkKey(curYear, curMonth);
+
+  document.getElementById('asset-input')?.addEventListener('input', e => {
+    e.target.value = fmtNum(e.target.value);
+  });
+
+  document.getElementById('asset-save')?.addEventListener('click', () => {
+    const raw = document.getElementById('asset-input').value;
+    const val = parseInt((raw||'').replace(/,/g,''));
+    if (!val || val <= 0) { alert('올바른 금액을 입력해주세요.'); return; }
+    monthlyAssets[mk] = val;
+    saveAssets();
+    const toast = document.getElementById('asset-toast');
+    if (toast) toast.innerHTML = '<div class="toast">✅ 총 자산이 저장되었어요!</div>';
+    setTimeout(() => render(), 1000);
+  });
+
+  document.getElementById('asset-delete')?.addEventListener('click', () => {
+    if (!confirm('이번 달 총 자산 기록을 삭제할까요?')) return;
+    delete monthlyAssets[mk];
+    saveAssets();
+    render();
+  });
+
+  // 내보내기
   const monthTx = getMonthTx();
   const allTx = transactions.slice().sort((a,b)=>b.date.localeCompare(a.date));
-
   document.getElementById('exp-csv')?.addEventListener('click', () =>
     exportCSV(monthTx, `가계부_${curYear}${String(curMonth+1).padStart(2,'0')}.csv`));
   document.getElementById('exp-xlsx')?.addEventListener('click', () =>
@@ -889,38 +1384,37 @@ function bindExport() {
     exportCSV(allTx, `가계부_전체.csv`));
 }
 
+// ─── EXPORT ─────────────────────────────────────────────────
 function txToRows(txs) {
   return txs.map(t => {
     const cat = ALL_CATS.find(c=>c.id===t.category)||{label:t.category};
     return {
       날짜: t.date,
       구분: t.type==='income'?'수입':'지출',
-      카테고리: cat.label.replace(/[🍚🚌🛍💊🎬📚🏠💸💼💡📈🎁💰]\s*/u,''),
+      카테고리: cat.label.replace(/[\u{1F300}-\u{1F9FF}]\s*/gu,'').trim(),
       금액: t.amount,
-      메모: t.memo||''
+      메모: t.memo||'',
+      자동여부: t.recurringId ? '자동' : '수동',
     };
   });
 }
-
 function exportCSV(txs, filename) {
   const rows = txToRows(txs);
-  const headers = ['날짜','구분','카테고리','금액','메모'];
+  const headers = ['날짜','구분','카테고리','금액','메모','자동여부'];
   const csv = [
     '\uFEFF' + headers.join(','),
     ...rows.map(r => headers.map(h => `"${(r[h]||'').toString().replace(/"/g,'""')}"`).join(','))
   ].join('\n');
   download(new Blob([csv],{type:'text/csv;charset=utf-8'}), filename);
 }
-
 function exportXLSX(txs, filename) {
   const rows = txToRows(txs);
   const ws = XLSX.utils.json_to_sheet(rows);
-  ws['!cols'] = [{wch:12},{wch:6},{wch:12},{wch:12},{wch:20}];
+  ws['!cols'] = [{wch:12},{wch:6},{wch:12},{wch:12},{wch:20},{wch:6}];
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, '가계부');
   XLSX.writeFile(wb, filename);
 }
-
 function download(blob, name) {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
