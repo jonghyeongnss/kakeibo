@@ -44,16 +44,24 @@
 
     /* SUMMARY */
     .summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+    .summary-grid-4{grid-template-columns:repeat(4,1fr)}
+    .summary-grid-5{grid-template-columns:repeat(5,1fr)}
+    @media(max-width:500px){.summary-grid-4,.summary-grid-5{grid-template-columns:repeat(3,1fr)}}
+    @media(max-width:340px){.summary-grid-4,.summary-grid-5{grid-template-columns:repeat(2,1fr)}}
     .scard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 10px;text-align:center;position:relative;overflow:hidden}
     .scard::before{content:'';position:absolute;bottom:0;left:0;right:0;height:3px}
     .scard.inc::before{background:var(--green)}
     .scard.exp::before{background:var(--red)}
     .scard.bal::before{background:var(--accent)}
+    .scard.sav::before{background:#818cf8}
+    .scard.inv::before{background:var(--blue)}
     .scard .slabel{font-size:.68rem;color:var(--text3);font-weight:600;margin-bottom:5px;letter-spacing:.5px;text-transform:uppercase}
     .scard .sval{font-family:var(--mono);font-size:.95rem;font-weight:700}
     .scard.inc .sval{color:var(--green)}
     .scard.exp .sval{color:var(--red)}
     .scard.bal .sval{color:var(--accent2)}
+    .scard.sav .sval{color:#818cf8}
+    .scard.inv .sval{color:var(--blue)}
 
     /* ASSET BANNER */
     .asset-banner{background:linear-gradient(135deg,rgba(96,165,250,.1),rgba(124,106,247,.1));border:1px solid rgba(96,165,250,.22);border-radius:var(--radius);padding:16px 18px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px}
@@ -91,6 +99,8 @@
     .tx-amt{font-family:var(--mono);font-size:.88rem;font-weight:700;flex-shrink:0}
     .tx-amt.inc{color:var(--green)}
     .tx-amt.exp{color:var(--red)}
+    .tx-amt.sav{color:#818cf8}
+    .tx-amt.inv{color:var(--blue)}
     .tx-del{background:none;border:none;color:var(--text3);cursor:pointer;padding:4px;border-radius:6px;font-size:.8rem;transition:all .2s;flex-shrink:0}
     .tx-del:hover{color:var(--red);background:rgba(248,113,113,.1)}
 
@@ -99,6 +109,8 @@
     .type-btn{padding:11px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--bg3);color:var(--text3);font-size:.88rem;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .2s}
     .type-btn.inc.on{border-color:var(--green);background:rgba(52,211,153,.1);color:var(--green)}
     .type-btn.exp.on{border-color:var(--red);background:rgba(248,113,113,.1);color:var(--red)}
+    .type-btn.sav.on{border-color:#818cf8;background:rgba(129,140,248,.1);color:#818cf8}
+    .type-btn.inv.on{border-color:var(--blue);background:rgba(96,165,250,.1);color:var(--blue)}
     .frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .fg{margin-bottom:12px}
     .flabel{font-size:.72rem;color:var(--text3);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;display:block}
@@ -120,6 +132,8 @@
     .rec-amt{font-family:var(--mono);font-size:.84rem;font-weight:700;flex-shrink:0}
     .rec-amt.inc{color:var(--green)}
     .rec-amt.exp{color:var(--red)}
+    .rec-amt.sav{color:#818cf8}
+    .rec-amt.inv{color:var(--blue)}
     .rec-del{background:none;border:none;color:var(--text3);cursor:pointer;padding:4px;border-radius:6px;font-size:.8rem;transition:all .2s;flex-shrink:0}
     .rec-del:hover{color:var(--red);background:rgba(248,113,113,.1)}
     .rec-toggle{position:relative;width:36px;height:20px;flex-shrink:0}
@@ -233,6 +247,7 @@
 
 <script>
 // ══ CATEGORIES ══════════════════════════════════════════════
+// type='expense' : 소비성 지출
 const EXP_CATS = [
   {id:'food',      label:'🍚 식비',     color:'#f87171'},
   {id:'transport', label:'🚌 교통',     color:'#fb923c'},
@@ -241,17 +256,31 @@ const EXP_CATS = [
   {id:'culture',   label:'🎬 문화/여가', color:'#60a5fa'},
   {id:'edu',       label:'📚 교육',     color:'#f472b6'},
   {id:'house',     label:'🏠 주거/관리', color:'#fbbf24'},
-  {id:'saving',    label:'🏦 적금/저축', color:'#818cf8'},
   {id:'etc',       label:'💸 기타',     color:'#94a3b8'},
 ];
-const INC_CATS = [
-  {id:'salary',  label:'💼 급여',     color:'#34d399'},
-  {id:'sidejob', label:'💡 부업',     color:'#10b981'},
-  {id:'invest',  label:'📈 투자',     color:'#06b6d4'},
-  {id:'gift',    label:'🎁 용돈/선물', color:'#8b5cf6'},
-  {id:'etc_in',  label:'💰 기타수입', color:'#64748b'},
+// type='saving' : 저축 (원금 보장 - 적금·예금 등)
+const SAV_CATS = [
+  {id:'sv_deposit', label:'🏦 적금',       color:'#818cf8'},
+  {id:'sv_savings', label:'💳 예금',        color:'#6366f1'},
+  {id:'sv_pension', label:'🏛 연금/청약',   color:'#8b5cf6'},
+  {id:'sv_etc',     label:'🪙 기타저축',    color:'#7c3aed'},
 ];
-const ALL_CATS = [...EXP_CATS,...INC_CATS];
+// type='invest' : 투자 (평가액 기준 - 주식·펀드 등)
+const INV_CATS = [
+  {id:'iv_stock',   label:'📈 주식/ETF',   color:'#06b6d4'},
+  {id:'iv_fund',    label:'💎 펀드/채권',  color:'#0ea5e9'},
+  {id:'iv_crypto',  label:'🪙 가상자산',   color:'#38bdf8'},
+  {id:'iv_etc',     label:'📊 기타투자',   color:'#0284c7'},
+];
+// type='income' : 수입
+const INC_CATS = [
+  {id:'salary',  label:'💼 급여',      color:'#34d399'},
+  {id:'sidejob', label:'💡 부업',      color:'#10b981'},
+  {id:'invest',  label:'📈 투자수익',  color:'#06b6d4'},
+  {id:'gift',    label:'🎁 용돈/선물', color:'#8b5cf6'},
+  {id:'etc_in',  label:'💰 기타수입',  color:'#64748b'},
+];
+const ALL_CATS = [...EXP_CATS,...SAV_CATS,...INV_CATS,...INC_CATS];
 
 // ══ UTILS ═══════════════════════════════════════════════════
 const fmt      = n => n.toLocaleString('ko-KR')+'원';
@@ -293,7 +322,9 @@ const getMonthBg  = () => budgets[mkKey(curYear,curMonth)]||{};
 const totals = txs => {
   const inc=txs.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
   const exp=txs.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
-  return {inc,exp,bal:inc-exp};
+  const sav=txs.filter(t=>t.type==='saving').reduce((s,t)=>s+t.amount,0);
+  const inv=txs.filter(t=>t.type==='invest').reduce((s,t)=>s+t.amount,0);
+  return {inc, exp, sav, inv, bal: inc-exp-sav-inv};
 };
 
 // ══ AUTO-APPLY RECURRING ════════════════════════════════════
@@ -336,10 +367,11 @@ function getPrevSnap(y, m) {
   return assetSnaps[mkKey(py,pm)] || null;
 }
 
-// 이번 달 추정 순자산 = 전월 자산 + 이번달 수입 - 이번달 지출
+// 추정 순자산: 전월자산 + 수입 - 순소비 (저축·투자는 자산으로 남으므로 차감X)
 function getNetAsset(y, m) {
   const txs = transactions.filter(t=>t.date.startsWith(mkKey(y,m)));
-  const {inc,exp} = totals(txs);
+  const inc = txs.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const exp = txs.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
   const prev = getPrevSnap(y, m);
   return prev ? prev.amount + inc - exp : inc - exp;
 }
@@ -353,17 +385,17 @@ function render() {
 
   const monthTx  = getMonthTx();
   const mb       = getMonthBg();
-  const {inc,exp,bal} = totals(monthTx);
+  const {inc,exp,sav,inv,bal} = totals(monthTx);
   const netAsset = getNetAsset(curYear, curMonth);
 
   const pages = {
-    dashboard: () => renderDashboard(monthTx,inc,exp,bal,netAsset,mb),
+    dashboard: () => renderDashboard(monthTx,inc,exp,sav,inv,bal,netAsset,mb),
     add:       () => renderAdd(),
     list:      () => renderList(monthTx),
     recurring: () => renderRecurring(),
     budget:    () => renderBudget(monthTx,mb),
     chart:     () => renderChart(),
-    report:    () => renderReport(monthTx,inc,exp,bal,netAsset,mb),
+    report:    () => renderReport(monthTx,inc,exp,sav,inv,bal,netAsset,mb),
   };
   document.getElementById('content').innerHTML = pages[curTab]?.() || '';
   afterRender();
@@ -411,8 +443,8 @@ function bindAssetModal() {
     const mk = mkKey(curYear,curMonth);
     const ex = assetSnaps[mk];
     document.getElementById('asset-modal-sub').innerHTML =
-      `<b>${curYear}년 ${curMonth+1}월</b> 말 기준 총 자산을 입력하세요.<br>
-      <span style="color:var(--text3)">예금·적금·현금 등 보유 자산 합계. 다음 달 잔액 계산의 기준이 됩니다.</span>`;
+      `<b>${curYear}년 ${curMonth+1}월</b> 말 기준 <b>총 자산</b>을 입력하세요.<br>
+      <span style="color:var(--text3)">예금 + 적금 + 투자계좌 + 현금 등 보유 자산 전체 합계.<br>다음 달 잔액 계산의 기준이 됩니다.</span>`;
     document.getElementById('asset-input').value = ex ? ex.amount.toLocaleString('ko-KR') : '';
     document.getElementById('asset-modal').classList.remove('hidden');
     setTimeout(()=>document.getElementById('asset-input').focus(), 80);
@@ -436,11 +468,13 @@ function bindAssetModal() {
 }
 
 // ══ SUMMARY ══════════════════════════════════════════════════
-const summaryHTML = (inc,exp,bal) => `
-  <div class="summary-grid">
+const summaryHTML = (inc,exp,sav,inv,bal) => `
+  <div class="summary-grid summary-grid-5">
     <div class="scard inc"><div class="slabel">수입</div><div class="sval">+${fmtShort(inc)}</div></div>
     <div class="scard exp"><div class="slabel">지출</div><div class="sval">-${fmtShort(exp)}</div></div>
-    <div class="scard bal"><div class="slabel">순 수지</div><div class="sval" style="color:${bal<0?'var(--red)':'var(--accent2)'}">${fmtShort(bal)}</div></div>
+    <div class="scard sav"><div class="slabel">저축</div><div class="sval">-${fmtShort(sav)}</div></div>
+    <div class="scard inv"><div class="slabel">투자</div><div class="sval">-${fmtShort(inv)}</div></div>
+    <div class="scard bal"><div class="slabel">잔액</div><div class="sval" style="color:${bal<0?'var(--red)':'var(--accent2)'}">${fmtShort(bal)}</div></div>
   </div>`;
 
 // ══ TX ROW ═══════════════════════════════════════════════════
@@ -456,13 +490,13 @@ function txRowHTML(tx, showDel=false) {
       <div class="tx-name">${tx.memo||cat.label}</div>
       <div class="tx-meta">${tx.date} · ${cat.label} ${badge}</div>
     </div>
-    <div class="tx-amt ${tx.type==='income'?'inc':'exp'}">${sign}${fmt(tx.amount)}</div>
+    <div class="tx-amt ${tx.type==='income'?'inc':tx.type==='saving'?'sav':tx.type==='invest'?'inv':'exp'}">${sign}${fmt(tx.amount)}</div>
     ${del}
   </div>`;
 }
 
 // ══ DASHBOARD ════════════════════════════════════════════════
-function renderDashboard(monthTx,inc,exp,bal,netAsset,mb) {
+function renderDashboard(monthTx,inc,exp,sav,inv,bal,netAsset,mb) {
   const expTx = monthTx.filter(t=>t.type==='expense');
   const over  = EXP_CATS.filter(c=>{
     const b=mb[c.id]; if(!b) return false;
@@ -473,9 +507,17 @@ function renderDashboard(monthTx,inc,exp,bal,netAsset,mb) {
   const top3=Object.entries(catMap).sort((a,b)=>b[1]-a[1]).slice(0,3);
   return `
   ${assetBannerHTML(netAsset)}
-  ${summaryHTML(inc,exp,bal)}
+  ${summaryHTML(inc,exp,sav,inv,bal)}
   ${over.length?`<div class="alert-over"><div class="ah">⚠️ 예산 초과</div>${over.map(c=>`<div class="am">${c.label} 예산을 초과했어요!</div>`).join('')}</div>`:''}
   ${top3.length?`<div class="card"><div class="card-title">🔥 이번 달 지출 TOP3</div>${top3.map(([id,amt])=>{const cat=EXP_CATS.find(c=>c.id===id);const pct=exp>0?Math.round(amt/exp*100):0;return`<div class="cstat"><div class="cdot" style="background:${cat?.color||'#888'}"></div><div class="cname">${cat?.label||id}</div><div class="cbar"><div class="cbar-fill" style="width:${pct}%;background:${cat?.color||'#888'}"></div></div><div class="cpct">${pct}%</div><div class="camt">${fmtShort(amt)}</div></div>`;}).join('')}</div>`:''}
+  ${sav>0?`<div class="card">
+    <div class="card-title">🏦 이번 달 저축 <span style="color:#818cf8;font-weight:700">${fmt(sav)}</span></div>
+    ${monthTx.filter(t=>t.type==='saving').map(t=>{const cat=SAV_CATS.find(c=>c.id===t.category)||{label:t.category,color:'#818cf8'};return`<div class="cstat"><div class="cdot" style="background:${cat.color}"></div><div class="cname">${t.memo||cat.label}</div><div style="font-size:.76rem;font-family:var(--mono);font-weight:700;color:#818cf8">${fmt(t.amount)}</div></div>`;}).join('')}
+  </div>`:''}
+  ${inv>0?`<div class="card">
+    <div class="card-title">📈 이번 달 투자 <span style="color:var(--blue);font-weight:700">${fmt(inv)}</span></div>
+    ${monthTx.filter(t=>t.type==='invest').map(t=>{const cat=INV_CATS.find(c=>c.id===t.category)||{label:t.category,color:'#06b6d4'};return`<div class="cstat"><div class="cdot" style="background:${cat.color}"></div><div class="cname">${t.memo||cat.label}</div><div style="font-size:.76rem;font-family:var(--mono);font-weight:700;color:var(--blue)">${fmt(t.amount)}</div></div>`;}).join('')}
+  </div>`:''}
   <div class="card">
     <div class="card-title">🕐 최근 거래</div>
     ${monthTx.slice(0,5).length?monthTx.slice(0,5).map(t=>txRowHTML(t)).join(''):'<div class="empty"><div class="ei">📭</div><p>이번 달 거래가 없어요<br/>➕ 입력 탭에서 추가하거나<br/>🔁 자동화 탭에서 정기 항목을 등록해요</p></div>'}
@@ -487,9 +529,11 @@ function renderAdd() {
   return `<div class="card">
     <div class="card-title">✏️ 거래 입력</div>
     <div id="toast-area"></div>
-    <div class="type-toggle">
-      <button class="type-btn exp on" id="btn-exp" onclick="setType('expense')">－ 지출</button>
+    <div class="type-toggle" style="grid-template-columns:repeat(4,1fr)">
       <button class="type-btn inc"    id="btn-inc" onclick="setType('income')">＋ 수입</button>
+      <button class="type-btn exp on" id="btn-exp" onclick="setType('expense')">－ 지출</button>
+      <button class="type-btn sav"    id="btn-sav" onclick="setType('saving')">🏦 저축</button>
+      <button class="type-btn inv"    id="btn-inv" onclick="setType('invest')">📈 투자</button>
     </div>
     <input type="hidden" id="tx-type" value="expense"/>
     <div class="frow">
@@ -505,10 +549,13 @@ function renderAdd() {
 }
 function setType(t) {
   document.getElementById('tx-type').value=t;
-  document.getElementById('btn-exp').className=`type-btn exp${t==='expense'?' on':''}`;
   document.getElementById('btn-inc').className=`type-btn inc${t==='income'?' on':''}`;
-  document.getElementById('tx-submit').textContent=t==='income'?'💰 수입 추가':'💸 지출 추가';
-  const cats=t==='expense'?EXP_CATS:INC_CATS;
+  document.getElementById('btn-exp').className=`type-btn exp${t==='expense'?' on':''}`;
+  document.getElementById('btn-sav').className=`type-btn sav${t==='saving'?' on':''}`;
+  document.getElementById('btn-inv').className=`type-btn inv${t==='invest'?' on':''}`;
+  const labels={'income':'💰 수입 추가','expense':'💸 지출 추가','saving':'🏦 저축 추가','invest':'📈 투자 추가'};
+  document.getElementById('tx-submit').textContent=labels[t]||'추가';
+  const cats=t==='income'?INC_CATS:t==='saving'?SAV_CATS:t==='invest'?INV_CATS:EXP_CATS;
   document.getElementById('tx-cat').innerHTML=cats.map(c=>`<option value="${c.id}">${c.label}</option>`).join('');
 }
 function bindAddForm() {
@@ -536,8 +583,8 @@ function submitTx() {
 
 // ══ LIST ══════════════════════════════════════════════════════
 function renderList(monthTx) {
-  const f=listFilter==='all'?monthTx:monthTx.filter(t=>t.type===(listFilter==='income'?'income':'expense'));
-  return `<div class="chips">${[['all','전체'],['income','수입'],['expense','지출']].map(([v,l])=>`<button class="chip${listFilter===v?' on':''}" data-f="${v}">${l}</button>`).join('')}</div>
+  const f=listFilter==='all'?monthTx:monthTx.filter(t=>t.type===listFilter);
+  return `<div class="chips">${[['all','전체'],['income','수입'],['expense','지출'],['saving','저축'],['invest','투자']].map(([v,l])=>`<button class="chip${listFilter===v?' on':''}" data-f="${v}">${l}</button>`).join('')}</div>
   <div class="card"><div class="card-title">📋 거래 내역 <span>${f.length}건</span></div>${f.length?f.map(t=>txRowHTML(t,true)).join(''):'<div class="empty"><div class="ei">📭</div><p>거래 내역이 없어요</p></div>'}</div>`;
 }
 function bindList() {
@@ -556,7 +603,7 @@ function renderRecurring() {
     return `<div class="rec-item">
       <div class="rec-icon" style="background:${cat.color}22">${cat.label.split(' ')[0]}</div>
       <div class="rec-body"><div class="rec-name">${r.name}</div><div class="rec-meta">${dayLbl} · ${cat.label}</div></div>
-      <div class="rec-amt ${r.type==='income'?'inc':'exp'}">${r.type==='income'?'+':'-'}${fmtShort(r.amount)}</div>
+      <div class="rec-amt ${r.type==='income'?'inc':r.type==='saving'?'sav':r.type==='invest'?'inv':'exp'}">${r.type==='income'?'+':'-'}${fmtShort(r.amount)}</div>
       <label class="rec-toggle" title="${r.enabled?'비활성화':'활성화'}">
         <input type="checkbox" class="rec-enabled" data-id="${r.id}" ${r.enabled?'checked':''}>
         <span class="rec-slider"></span>
@@ -577,9 +624,11 @@ function renderRecurring() {
   <div class="card">
     <div class="card-title">➕ 정기 항목 추가</div>
     <div id="rec-toast"></div>
-    <div class="type-toggle">
-      <button class="type-btn exp on" id="rec-btn-exp" onclick="setRecType('expense')">－ 지출/적금</button>
+    <div class="type-toggle" style="grid-template-columns:repeat(4,1fr)">
       <button class="type-btn inc"    id="rec-btn-inc" onclick="setRecType('income')">＋ 수입</button>
+      <button class="type-btn exp on" id="rec-btn-exp" onclick="setRecType('expense')">－ 지출</button>
+      <button class="type-btn sav"    id="rec-btn-sav" onclick="setRecType('saving')">🏦 저축</button>
+      <button class="type-btn inv"    id="rec-btn-inv" onclick="setRecType('invest')">📈 투자</button>
     </div>
     <input type="hidden" id="rec-type" value="expense"/>
     <div class="fg"><label class="flabel">항목 이름</label><input type="text" class="finput" id="rec-name" placeholder="예: 월급, 청약적금, 월세, 넷플릭스"/></div>
@@ -595,9 +644,11 @@ function renderRecurring() {
 }
 function setRecType(t) {
   document.getElementById('rec-type').value=t;
-  document.getElementById('rec-btn-exp').className=`type-btn exp${t==='expense'?' on':''}`;
   document.getElementById('rec-btn-inc').className=`type-btn inc${t==='income'?' on':''}`;
-  const cats=t==='expense'?EXP_CATS:INC_CATS;
+  document.getElementById('rec-btn-exp').className=`type-btn exp${t==='expense'?' on':''}`;
+  document.getElementById('rec-btn-sav').className=`type-btn sav${t==='saving'?' on':''}`;
+  document.getElementById('rec-btn-inv').className=`type-btn inv${t==='invest'?' on':''}`;
+  const cats=t==='income'?INC_CATS:t==='saving'?SAV_CATS:t==='invest'?INV_CATS:EXP_CATS;
   document.getElementById('rec-cat').innerHTML=cats.map(c=>`<option value="${c.id}">${c.label}</option>`).join('');
 }
 function bindRecurring() {
@@ -639,6 +690,8 @@ function bindRecurring() {
 function renderBudget(monthTx,mb) {
   const expTx=monthTx.filter(t=>t.type==='expense');
   const cs={};expTx.forEach(t=>{cs[t.category]=(cs[t.category]||0)+t.amount;});
+  const savSpent={};monthTx.filter(t=>t.type==='saving').forEach(t=>{savSpent[t.category]=(savSpent[t.category]||0)+t.amount;});
+  const invSpent={};monthTx.filter(t=>t.type==='invest').forEach(t=>{invSpent[t.category]=(invSpent[t.category]||0)+t.amount;});
   return `<div class="card"><div class="card-title">🎯 카테고리별 예산</div>
     <p style="font-size:.75rem;color:var(--text3);margin-bottom:16px">목표 예산을 설정하고 지출 현황을 확인해요</p>
     ${EXP_CATS.map(cat=>{
@@ -653,6 +706,42 @@ function renderBudget(monthTx,mb) {
         <div class="binput-row">
           <input type="text" inputmode="numeric" data-cat="${cat.id}" placeholder="예산 금액" value="${bg>0?bg.toLocaleString('ko-KR'):''}"/>
           <button class="bsave" data-cat="${cat.id}">저장</button>
+        </div></div>`;
+    }).join('')}
+  </div>
+  <div class="card">
+    <div class="card-title">🏦 저축 목표</div>
+    <p style="font-size:.75rem;color:var(--text3);margin-bottom:16px">매월 저축 목표 금액 (적금·예금·연금 등)</p>
+    ${SAV_CATS.map(cat=>{
+      const bg=mb['sav_'+cat.id]||0, sp=savSpent[cat.id]||0;
+      const pct=bg>0?Math.min(Math.round(sp/bg*100),100):0;
+      const cls=sp>bg?'over':pct>=80?'warn':'ok';
+      return `<div class="bitem">
+        <div class="bheader"><span class="bname">${cat.label}</span>
+          <span class="bamts">${fmt(sp)} / ${bg>0?fmt(bg):'미설정'}</span>
+        </div>
+        ${bg>0?`<div class="pbar"><div class="pfill ${cls}" style="width:${pct}%;background:linear-gradient(90deg,#818cf8,#a78bfa)"></div></div>`:''}
+        <div class="binput-row">
+          <input type="text" inputmode="numeric" data-cat="sav_${cat.id}" placeholder="목표 금액" value="${bg>0?bg.toLocaleString('ko-KR'):''}"/>
+          <button class="bsave" data-cat="sav_${cat.id}">저장</button>
+        </div></div>`;
+    }).join('')}
+  </div>
+  <div class="card">
+    <div class="card-title">📈 투자 목표</div>
+    <p style="font-size:.75rem;color:var(--text3);margin-bottom:16px">매월 투자 납입 목표 금액 (주식·펀드 등)</p>
+    ${INV_CATS.map(cat=>{
+      const bg=mb['inv_'+cat.id]||0, sp=invSpent[cat.id]||0;
+      const pct=bg>0?Math.min(Math.round(sp/bg*100),100):0;
+      const cls=sp>bg?'over':pct>=80?'warn':'ok';
+      return `<div class="bitem">
+        <div class="bheader"><span class="bname">${cat.label}</span>
+          <span class="bamts">${fmt(sp)} / ${bg>0?fmt(bg):'미설정'}</span>
+        </div>
+        ${bg>0?`<div class="pbar"><div class="pfill ${cls}" style="width:${pct}%;background:linear-gradient(90deg,#06b6d4,#38bdf8)"></div></div>`:''}
+        <div class="binput-row">
+          <input type="text" inputmode="numeric" data-cat="inv_${cat.id}" placeholder="목표 금액" value="${bg>0?bg.toLocaleString('ko-KR'):''}"/>
+          <button class="bsave" data-cat="inv_${cat.id}">저장</button>
         </div></div>`;
     }).join('')}
   </div>`;
@@ -673,7 +762,9 @@ function bindBudget() {
 // ══ CHART ════════════════════════════════════════════════════
 function renderChart() {
   return `
-  <div class="card"><div class="card-title">🥧 이번 달 지출 비율</div><div class="chart-wrap"><canvas id="pie-chart"></canvas></div></div>
+  <div class="card"><div class="card-title">🥧 이번 달 소비 지출</div><div class="chart-wrap"><canvas id="pie-chart"></canvas></div></div>
+  <div class="card"><div class="card-title">🏦 이번 달 저축</div><div class="chart-wrap"><canvas id="sav-chart"></canvas></div></div>
+  <div class="card"><div class="card-title">📈 이번 달 투자</div><div class="chart-wrap"><canvas id="inv-chart"></canvas></div></div>
   <div class="card"><div class="card-title">📊 최근 6개월 수입·지출</div><div class="chart-wrap"><canvas id="bar-chart"></canvas></div></div>
   <div class="card"><div class="card-title">💙 총 자산 추이</div><div class="chart-wrap"><canvas id="asset-chart"></canvas></div></div>`;
 }
@@ -691,11 +782,35 @@ function buildCharts() {
     pieEl.closest('.card').querySelector('.chart-wrap').innerHTML='<div class="empty"><div class="ei">📊</div><p>지출 내역을 추가하면 차트가 표시돼요</p></div>';
   }
 
+  // 저축 파이차트
+  const savTxChart=monthTx.filter(t=>t.type==='saving');
+  const savMap={};savTxChart.forEach(t=>{savMap[t.category]=(savMap[t.category]||0)+t.amount;});
+  const savKeys=Object.keys(savMap).filter(k=>savMap[k]>0);
+  const savCatsChart=savKeys.map(k=>SAV_CATS.find(c=>c.id===k)||{id:k,label:k,color:'#818cf8'});
+  const savEl=document.getElementById('sav-chart');
+  if(savEl&&savKeys.length){
+    new Chart(savEl,{type:'doughnut',data:{labels:savCatsChart.map(c=>c.label),datasets:[{data:savKeys.map(k=>savMap[k]),backgroundColor:savCatsChart.map(c=>c.color),borderWidth:2,borderColor:'#16162a'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:11},boxWidth:10,padding:10,color:'#9898c0'}},tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${fmt(ctx.raw)}`}}},cutout:'60%'}});
+  } else if(savEl){
+    savEl.closest('.card').querySelector('.chart-wrap').innerHTML='<div class="empty"><div class="ei">🏦</div><p>저축 내역이 없어요</p></div>';
+  }
+
+  // 투자 파이차트
+  const invTxChart=monthTx.filter(t=>t.type==='invest');
+  const invMap={};invTxChart.forEach(t=>{invMap[t.category]=(invMap[t.category]||0)+t.amount;});
+  const invKeys=Object.keys(invMap).filter(k=>invMap[k]>0);
+  const invCatsChart=invKeys.map(k=>INV_CATS.find(c=>c.id===k)||{id:k,label:k,color:'#06b6d4'});
+  const invEl=document.getElementById('inv-chart');
+  if(invEl&&invKeys.length){
+    new Chart(invEl,{type:'doughnut',data:{labels:invCatsChart.map(c=>c.label),datasets:[{data:invKeys.map(k=>invMap[k]),backgroundColor:invCatsChart.map(c=>c.color),borderWidth:2,borderColor:'#16162a'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:11},boxWidth:10,padding:10,color:'#9898c0'}},tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${fmt(ctx.raw)}`}}},cutout:'60%'}});
+  } else if(invEl){
+    invEl.closest('.card').querySelector('.chart-wrap').innerHTML='<div class="empty"><div class="ei">📈</div><p>투자 내역이 없어요</p></div>';
+  }
+
   const m6=[];
   for(let i=5;i>=0;i--){let m=curMonth-i,y=curYear;if(m<0){m+=12;y--;}m6.push({key:mkKey(y,m),label:`${String(m+1).padStart(2,'0')}월`});}
-  const b6=m6.map(({key,label})=>{const tx=transactions.filter(t=>t.date.startsWith(key));return{label,inc:tx.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0),exp:tx.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0)};});
+  const b6=m6.map(({key,label})=>{const tx=transactions.filter(t=>t.date.startsWith(key));return{label,inc:tx.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0),exp:tx.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0),sav:tx.filter(t=>t.type==='saving').reduce((s,t)=>s+t.amount,0),inv:tx.filter(t=>t.type==='invest').reduce((s,t)=>s+t.amount,0)};});
   const barEl=document.getElementById('bar-chart');
-  if(barEl) new Chart(barEl,{type:'bar',data:{labels:b6.map(b=>b.label),datasets:[{label:'수입',data:b6.map(b=>b.inc),backgroundColor:'#34d39944',borderColor:'#34d399',borderWidth:1.5,borderRadius:5},{label:'지출',data:b6.map(b=>b.exp),backgroundColor:'#f8717144',borderColor:'#f87171',borderWidth:1.5,borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:11},boxWidth:10,color:'#9898c0'}},tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${fmt(ctx.raw)}`}}},scales:{y:{beginAtZero:true,ticks:{callback:v=>fmtShort(v),color:'#5c5c8a'},grid:{color:'#2e2e50'}},x:{ticks:{color:'#5c5c8a'},grid:{display:false}}}}});
+  if(barEl) new Chart(barEl,{type:'bar',data:{labels:b6.map(b=>b.label),datasets:[{label:'수입',data:b6.map(b=>b.inc),backgroundColor:'#34d39944',borderColor:'#34d399',borderWidth:1.5,borderRadius:5},{label:'지출',data:b6.map(b=>b.exp),backgroundColor:'#f8717144',borderColor:'#f87171',borderWidth:1.5,borderRadius:5},{label:'저축',data:b6.map(b=>b.sav),backgroundColor:'rgba(129,140,248,.3)',borderColor:'#818cf8',borderWidth:1.5,borderRadius:5},{label:'투자',data:b6.map(b=>b.inv),backgroundColor:'rgba(96,165,250,.3)',borderColor:'#60a5fa',borderWidth:1.5,borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:11},boxWidth:10,color:'#9898c0'}},tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${fmt(ctx.raw)}`}}},scales:{y:{beginAtZero:true,ticks:{callback:v=>fmtShort(v),color:'#5c5c8a'},grid:{color:'#2e2e50'}},x:{ticks:{color:'#5c5c8a'},grid:{display:false}}}}});
 
   // 자산 추이 (12개월)
   const m12=[];
@@ -724,8 +839,10 @@ function buildCharts() {
 }
 
 // ══ REPORT ═══════════════════════════════════════════════════
-function renderReport(monthTx,inc,exp,bal,netAsset,mb) {
+function renderReport(monthTx,inc,exp,sav,inv,bal,netAsset,mb) {
   const expTx=monthTx.filter(t=>t.type==='expense');
+  const savTx=monthTx.filter(t=>t.type==='saving');
+  const invTx=monthTx.filter(t=>t.type==='invest');
   const catMap={};expTx.forEach(t=>{catMap[t.category]=(catMap[t.category]||0)+t.amount;});
 
   let pm=curMonth-1,py=curYear;if(pm<0){pm=11;py--;}
@@ -733,7 +850,9 @@ function renderReport(monthTx,inc,exp,bal,netAsset,mb) {
   const prevTx=transactions.filter(t=>t.date.startsWith(pmk));
   const prevExp=prevTx.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
   const prevInc=prevTx.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
-  const saveRate=inc>0?Math.round(bal/inc*100):0;
+  const prevSav=prevTx.filter(t=>t.type==='saving').reduce((s,t)=>s+t.amount,0);
+  const prevInv=prevTx.filter(t=>t.type==='invest').reduce((s,t)=>s+t.amount,0);
+  const saveRate=inc>0?Math.round((sav+inv)/inc*100):0;
   const prevSnp=getPrevSnap(curYear,curMonth);
   const curSnp=assetSnaps[mkKey(curYear,curMonth)];
 
@@ -758,12 +877,27 @@ function renderReport(monthTx,inc,exp,bal,netAsset,mb) {
   </div>
   <div class="card">
     <div class="card-title">📈 이번 달 요약</div>
-    ${[['총 수입',`<span style="color:var(--green)">${fmt(inc)}</span>`],['총 지출',`<span style="color:var(--red)">${fmt(exp)}</span>`],['순 수지',`<span style="color:${bal>=0?'var(--accent2)':'var(--red)'}">${fmt(bal)}</span>`],['저축률',`<span style="color:${saveRate>=20?'var(--green)':'var(--yellow)'}">${saveRate}%</span>`]].map(([l,v])=>`<div class="srow"><span class="slbl">${l}</span><span class="sval2">${v}</span></div>`).join('')}
+    <div class="srow"><span class="slbl">총 수입</span><span class="sval2" style="color:var(--green)">+${fmt(inc)}</span></div>
+    <div class="srow"><span class="slbl">소비 지출</span><span class="sval2" style="color:var(--red)">-${fmt(exp)}</span></div>
+    <div class="srow"><span class="slbl">저축</span><span class="sval2" style="color:#818cf8">-${fmt(sav)}</span></div>
+    <div class="srow"><span class="slbl">투자</span><span class="sval2" style="color:var(--blue)">-${fmt(inv)}</span></div>
+    <div class="srow"><span class="slbl">남은 잔액</span><span class="sval2" style="color:${bal>=0?'var(--accent2)':'var(--red)'}">${fmt(bal)}</span></div>
+    <div class="srow"><span class="slbl">저축+투자율</span><span class="sval2" style="color:${saveRate>=20?'var(--green)':'var(--yellow)'}">${saveRate}%</span></div>
+  </div>
+  <div class="card">
+    <div class="card-title">🏦 저축 내역</div>
+    ${savTx.length ? savTx.map(t=>{const cat=SAV_CATS.find(c=>c.id===t.category)||{label:t.category,color:'#818cf8'};return`<div class="cstat"><div class="cdot" style="background:${cat.color}"></div><div class="cname">${t.memo||cat.label}</div><div style="font-size:.74rem;font-family:var(--mono);font-weight:700;color:#818cf8">${fmt(t.amount)}</div></div>`;}).join('')+'<div class="srow" style="margin-top:6px"><span class="slbl" style="font-weight:700">합계</span><span class="sval2" style="color:#818cf8">${fmt(sav)}</span></div>' : '<div class="empty" style="padding:16px"><div class="ei">🏦</div><p>이번 달 저축 내역이 없어요</p></div>'}
+  </div>
+  <div class="card">
+    <div class="card-title">📈 투자 내역</div>
+    ${invTx.length ? invTx.map(t=>{const cat=INV_CATS.find(c=>c.id===t.category)||{label:t.category,color:'#06b6d4'};return`<div class="cstat"><div class="cdot" style="background:${cat.color}"></div><div class="cname">${t.memo||cat.label}</div><div style="font-size:.74rem;font-family:var(--mono);font-weight:700;color:var(--blue)">${fmt(t.amount)}</div></div>`;}).join('')+'<div class="srow" style="margin-top:6px"><span class="slbl" style="font-weight:700">합계</span><span class="sval2" style="color:var(--blue)">${fmt(inv)}</span></div>' : '<div class="empty" style="padding:16px"><div class="ei">📈</div><p>이번 달 투자 내역이 없어요</p></div>'}
   </div>
   <div class="card">
     <div class="card-title">📅 전월 대비</div>
     <div class="srow"><span class="slbl">수입 변화</span><span class="sval2">${diffHTML(inc-prevInc,prevInc)}</span></div>
     <div class="srow"><span class="slbl">지출 변화</span><span class="sval2">${diffHTML(exp-prevExp,prevExp)}</span></div>
+    <div class="srow"><span class="slbl">저축 변화</span><span class="sval2">${diffHTML(sav-prevSav,prevSav)}</span></div>
+    <div class="srow"><span class="slbl">투자 변화</span><span class="sval2">${diffHTML(inv-prevInv,prevInv)}</span></div>
   </div>
   <div class="card">
     <div class="card-title">🍽 카테고리별 지출</div>
@@ -786,7 +920,7 @@ function bindExport() {
   document.getElementById('exp-xlsx')?.addEventListener('click',()=>exportXLSX(mTx,`가계부_${curYear}${pad}.xlsx`));
   document.getElementById('exp-all-csv')?.addEventListener('click',()=>exportCSV(allTx,'가계부_전체.csv'));
 }
-function txToRows(txs){return txs.map(t=>{const cat=ALL_CATS.find(c=>c.id===t.category)||{label:t.category};return{날짜:t.date,구분:t.type==='income'?'수입':'지출',카테고리:cat.label.replace(/\p{Emoji}\s*/gu,''),금액:t.amount,메모:t.memo||'',자동여부:t.auto?'자동':'수동'};});}
+function txToRows(txs){const typeLabel={income:'수입',expense:'지출',saving:'저축',invest:'투자'};return txs.map(t=>{const cat=ALL_CATS.find(c=>c.id===t.category)||{label:t.category};return{날짜:t.date,구분:typeLabel[t.type]||t.type,카테고리:cat.label.replace(/\p{Emoji}\s*/gu,''),금액:t.amount,메모:t.memo||'',자동여부:t.auto?'자동':'수동'};});}
 function exportCSV(txs,fn){const r=txToRows(txs),h=['날짜','구분','카테고리','금액','메모','자동여부'],csv=['\uFEFF'+h.join(','),...r.map(row=>h.map(k=>`"${(row[k]||'').toString().replace(/"/g,'""')}"`).join(','))].join('\n');dl(new Blob([csv],{type:'text/csv;charset=utf-8'}),fn);}
 function exportXLSX(txs,fn){const ws=XLSX.utils.json_to_sheet(txToRows(txs));ws['!cols']=[{wch:12},{wch:6},{wch:12},{wch:12},{wch:20},{wch:8}];const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'가계부');XLSX.writeFile(wb,fn);}
 function dl(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href);}
